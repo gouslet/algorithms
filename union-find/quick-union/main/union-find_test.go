@@ -1,18 +1,16 @@
 package main
 
 import (
-	uf "algorithms/union-find"
+	uf "algorithms/union-find/quick-union"
 	"fmt"
 	"io"
 	"log"
 	"os"
 )
 
-func main() {
-	filename := "TinyUF.txt"
-	if len(os.Args) > 1 {
-		filename = os.Args[1]
-	}
+func ExampleUnionFind() {
+	filename := "../../TinyUF.txt"
+
 	file, err := os.Open(filename)
 	if err != nil {
 		log.Fatal(err)
@@ -30,5 +28,14 @@ func main() {
 		}
 	}
 	fmt.Printf("%d components\n", UF.Count())
-
+	// Output:
+	// 4 3
+	// 3 8
+	// 6 5
+	// 9 4
+	// 2 1
+	// 5 0
+	// 7 2
+	// 6 1
+	// 2 components
 }
