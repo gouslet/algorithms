@@ -5,8 +5,6 @@ import (
 	"io"
 )
 
-type Bag []int
-
 type Graph struct {
 	v   int   // 顶点数目
 	e   int   // 边的数
@@ -19,7 +17,7 @@ func NewGraph(v int) *Graph {
 	return &Graph{v, 0, adj}
 }
 
-func NewGraphFromReader(r io.Reader) *Graph {
+func NewGraphFrom(r io.Reader) *Graph {
 	var v, e int
 	fmt.Fscanf(r, "%d\n%d\n", &v, &e)
 	graph := NewGraph(v)

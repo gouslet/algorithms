@@ -1,0 +1,9 @@
+Algorithms/Theoretical CS/Databases/Scientific Computing
+Introduction to CS/Advanced Programming/Algorithms
+Advaned Programming/Computational Biology
+Theoretical CS/Computational Biology/Artificial Intelligence
+Linear Algebra/Theoretical CS
+Calculus/Linear Algebra
+
+Artificial Intelligence/Neural Networks/Robotics/Machine Learning
+Machine Learning/Neural Networks

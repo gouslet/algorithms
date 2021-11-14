@@ -21,7 +21,7 @@ func main() {
 	if err != nil {
 		log.Fatalln(err)
 	}
-	g := graph.NewGraphFromReader(file)
+	g := graph.NewGraphFrom(file)
 	s := 0
 	search := graph.NewDepthFirstGraph(*g, s)
 
