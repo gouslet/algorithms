@@ -29,6 +29,12 @@ func (this *Queue) Dequeue() int {
 	}
 }
 
-func (this *Queue) Iterator() []int {
-	return this.val
+func (this *Queue) Map(fn func(v int)) {
+	for i := 0; i < len(this.val); i++ {
+		fn(this.val[i])
+	}
+}
+
+func (this *Queue) Size() int {
+	return len(this.val)
 }

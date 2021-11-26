@@ -7,14 +7,14 @@ import (
 	"strings"
 )
 
-type SymbolGraph struct {
+type SymbolDigraph struct {
 	st   map[string]int // 符号名->索引
 	keys []string       // 索引->符号名
-	g    *Graph
+	g    *Digraph
 }
 
-// NewSymbolGraphFrom 根据filename指定的文件构造图，使用delim来分隔顶点名
-func NewSymbolGraphFrom(in io.ReadSeekCloser, sep string) *SymbolGraph {
+// NewSymbolDigraphFrom 根据filename指定的文件构造图，使用delim来分隔顶点名
+func NewSymbolDigraphFrom(in io.ReadSeekCloser, sep string) *SymbolDigraph {
 	st := make(map[string]int)
 
 	scanner := bufio.NewScanner(in)
@@ -22,9 +22,9 @@ func NewSymbolGraphFrom(in io.ReadSeekCloser, sep string) *SymbolGraph {
 		line := scanner.Text()
 		strs := strings.Split(line, sep)
 
-		for _, s := range strs {
-			if _, ok := st[s]; !ok {
-				st[s] = len(st)
+		for i := 0; i < len(strs); i++ {
+			if _, ok := st[strs[i]]; !ok {
+				st[strs[i]] = len(st)
 			}
 		}
 	}
@@ -34,7 +34,7 @@ func NewSymbolGraphFrom(in io.ReadSeekCloser, sep string) *SymbolGraph {
 		keys[st[name]] = name
 	}
 
-	g := NewGraph(len(st))
+	g := NewDigraph(len(st))
 
 	in.Seek(0, os.SEEK_SET)
 	scanner = bufio.NewScanner(in)
@@ -48,26 +48,26 @@ func NewSymbolGraphFrom(in io.ReadSeekCloser, sep string) *SymbolGraph {
 		}
 	}
 
-	return &SymbolGraph{st, keys, g}
+	return &SymbolDigraph{st, keys, g}
 }
 
 // Contains key是一个顶点吗？
-func (this *SymbolGraph) Cotains(key string) bool {
+func (this *SymbolDigraph) Cotains(key string) bool {
 	_, ok := this.st[key]
 	return ok
 }
 
 // Index key的索引
-func (this *SymbolGraph) Index(key string) int {
+func (this *SymbolDigraph) Index(key string) int {
 	return this.st[key]
 }
 
 // Name 索引v的顶点名
-func (this *SymbolGraph) Name(v int) string {
+func (this *SymbolDigraph) Name(v int) string {
 	return this.keys[v]
 }
 
 // G 隐藏的Graph对象
-func (this *SymbolGraph) G() *Graph {
+func (this *SymbolDigraph) G() *Digraph {
 	return this.g
 }

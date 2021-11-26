@@ -29,6 +29,12 @@ func (this *Stack) Pop() int {
 	}
 }
 
-func (this *Stack) Iterator() []int {
-	return this.val
+func (this Stack) Map(fn func(v int)) {
+	for i := len(this.val) - 1; i > -1; i-- {
+		fn(int(this.val[i]))
+	}
+}
+
+func (this *Stack) Size() int {
+	return len(this.val)
 }

@@ -1,5 +1,5 @@
 package util
 
 type Iterable interface {
-	Iterator() []int
+	Map(fn func(v int))
 }

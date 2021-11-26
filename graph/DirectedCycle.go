@@ -10,7 +10,7 @@ type DirectedCycle struct {
 }
 
 func NewDirectedCycle(g Digraph) *DirectedCycle {
-	dc := &DirectedCycle{make([]bool, g.V()), make([]int, g.V()), util.Stack{}, make([]bool, g.V())}
+	dc := &DirectedCycle{make([]bool, g.V()), make([]int, g.V()), nil, make([]bool, g.V())}
 	for i := 0; i < g.V(); i++ {
 		if !dc.marked[i] {
 			dc.dfs(g, i)
@@ -18,11 +18,12 @@ func NewDirectedCycle(g Digraph) *DirectedCycle {
 	}
 	return dc
 }
+
 func (this *DirectedCycle) dfs(g Digraph, v int) {
 	this.onStack[v] = true
 	this.marked[v] = true
 
-	for w := range g.Adj(v) {
+	for _, w := range g.Adj(v) {
 		if this.HasCycle() {
 			return
 		} else if !this.marked[w] {
@@ -39,11 +40,13 @@ func (this *DirectedCycle) dfs(g Digraph, v int) {
 	}
 	this.onStack[v] = false
 }
+
+// HasCycle 有向图中是否含有环
 func (this DirectedCycle) HasCycle() bool {
-	return this.cycle != nil
+	return this.cycle != nil && this.cycle.Size() != 0
 }
 
+// Cycle 返回有向环中的所有顶点，如果存在的话
 func (this DirectedCycle) Cycle() util.Iterable {
-	cycle := []int{}
-	return cycle
+	return this.cycle
 }

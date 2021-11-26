@@ -29,11 +29,14 @@ func (this *DepthFirstOrder) dfs(g Digraph, v int) {
 	this.pre.Enqueue(v)
 
 	this.marked[v] = true
-	for w := range g.Adj(v) {
+	for _, w := range g.Adj(v) {
 		if !this.marked[w] {
 			this.dfs(g, w)
 		}
 	}
+
+	this.post.Enqueue(v)
+	this.reversePost.Push(v)
 }
 
 func (this *DepthFirstOrder) Pre() util.Iterable {
