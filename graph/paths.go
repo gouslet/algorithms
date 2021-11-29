@@ -8,7 +8,7 @@ type DepthFirstPaths struct {
 	s      int    // 起点
 }
 
-func NewDepthFirsPaths(g Graph, s int) *DepthFirstPaths {
+func NewDepthFirsPaths(g *Graph, s int) *DepthFirstPaths {
 	marked := make([]bool, g.V())
 	edgeTo := make([]int, g.V())
 	paths := &DepthFirstPaths{marked, edgeTo, s}
@@ -16,7 +16,7 @@ func NewDepthFirsPaths(g Graph, s int) *DepthFirstPaths {
 	return paths
 }
 
-func (this *DepthFirstPaths) dfs(g Graph, v int) {
+func (this *DepthFirstPaths) dfs(g *Graph, v int) {
 	this.marked[v] = true
 	for _, w := range g.Adj(v) {
 		if !this.marked[w] {
@@ -34,10 +34,11 @@ func (this *DepthFirstPaths) PathTo(v int) []int {
 	if !this.HasPathTo(v) {
 		return nil
 	}
-	var paths []int
+	paths := []int{0}
 	for x := v; x != this.s; x = this.edgeTo[x] {
 		paths = append(paths, x)
 	}
+
 	return paths
 }
 
@@ -47,7 +48,7 @@ type BreadthFirstPaths struct {
 	s      int    // 起点
 }
 
-func NewBreadthFirsPaths(g Graph, s int) *BreadthFirstPaths {
+func NewBreadthFirsPaths(g *Graph, s int) *BreadthFirstPaths {
 	marked := make([]bool, g.V())
 	edgeTo := make([]int, g.V())
 	paths := &BreadthFirstPaths{marked, edgeTo, s}
@@ -55,7 +56,7 @@ func NewBreadthFirsPaths(g Graph, s int) *BreadthFirstPaths {
 	return paths
 }
 
-func (this *BreadthFirstPaths) bfs(g Graph, v int) {
+func (this *BreadthFirstPaths) bfs(g *Graph, v int) {
 	this.marked[v] = true
 	queue := util.NewQueue()
 	queue.Enqueue(v)
@@ -79,9 +80,14 @@ func (this *BreadthFirstPaths) PathTo(v int) []int {
 	if !this.HasPathTo(v) {
 		return nil
 	}
-	var paths []int
+	paths := util.NewStack()
 	for x := v; x != this.s; x = this.edgeTo[x] {
-		paths = append(paths, x)
+		paths.Push(x)
 	}
-	return paths
+	paths.Push(this.s)
+	p := make([]int, 0)
+	for !paths.IsEmpty() {
+		p = append(p, paths.Pop())
+	}
+	return p
 }
