@@ -6,12 +6,40 @@ import (
 )
 
 type SP struct {
-	distTo []float64 // 从s到点的已知最短路径长度
-	edgeTo []int     // 父链接数组
+	distTo []float64       // 从s到点的已知最短路径长度
+	edgeTo []*DirectedEdge // 父链接数组
 }
 
-func NewSP(g EdgeWeightedDigraph, s int) {
-	return
+func NewDijkstraSP(g EdgeWeightedDigraph, s int) *SP {
+	edgeTo := make([]*DirectedEdge, g.V())
+	distTo := make([]float64, g.V())
+	pq := util.NewIndexMinPQ(g.V())
+
+	for v := 0; v < g.V(); v++ {
+		distTo[v] = math.MaxFloat64
+	}
+	distTo[s] = 0.0
+
+	pq.Insert(s, 0.0)
+
+	relax := func(g EdgeWeightedDigraph, v int) {
+		for _, e := range g.Adj(v) {
+			w := e.To()
+			if l := distTo[v] + e.Weight(); distTo[w] > l {
+				distTo[w] = l
+				edgeTo[w] = e
+			}
+			if pq.Contains(w) {
+				pq.Set(w, distTo[w])
+			} else {
+				pq.Insert(w, distTo[w])
+			}
+		}
+	}
+	for !pq.IsEmpty() {
+		relax(g, pq.DelMin())
+	}
+	return &SP{distTo, edgeTo}
 }
 
 // DistTo 从顶点s到v的距离，如果不存在则路径为无穷大
@@ -29,5 +57,9 @@ func (this SP) PathTo(v int) []*DirectedEdge {
 	if !this.HasPathTo(v) {
 		return nil
 	}
-	paths := util.NewStack()
+	paths := []*DirectedEdge{}
+	for e := this.edgeTo[v]; e != nil; e = this.edgeTo[e.From()] {
+		paths = append(paths, e)
+	}
+	return paths
 }
