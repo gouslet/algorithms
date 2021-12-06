@@ -29,6 +29,8 @@ func exampleGraph() {
 	filename := filepath.Join(filepath.Dir(crtfile), "../TinyCG.txt")
 
 	file, err := os.Open(filename)
+	defer file.Close()
+
 	if err != nil {
 		log.Fatalln(err)
 	}
