@@ -18,7 +18,9 @@ func main() {
 	/*********************3.*******************/
 	// exampleDFSPaths()
 	/*********************4.*******************/
-	exampleBFSPaths()
+	// exampleBFSPaths()
+	/*********************5.*******************/
+	exampleDijkstraSP()
 }
 
 func exampleGraph() {
@@ -165,4 +167,39 @@ func exampleBFSPaths() {
 	// 0 to 4: 0-4-2-3-5
 	// 0 to 5: 0-5
 
+}
+
+func exampleDijkstraSP() {
+	_, crtfile, _, ok := runtime.Caller(0)
+	if !ok {
+		panic(errors.New("Can not get current file info"))
+	}
+	filename := filepath.Join(filepath.Dir(crtfile), "../tinyEWD.txt")
+	file, err := os.Open(filename)
+	defer file.Close()
+
+	if err != nil {
+		log.Fatalln(err)
+	}
+	g := graph.NewWeightedEdgeDigraphFrom(file)
+
+	sp := graph.NewDijkstraSP(g, 0)
+	for i := 0; i < g.V(); i++ {
+		fmt.Printf("0 to %d: ", i)
+		fmt.Printf(" (%4.2f): ", sp.DistTo(i))
+		if sp.HasPathTo(i) {
+			for _, e := range sp.PathTo(i) {
+				fmt.Printf("%v", e)
+			}
+			fmt.Println()
+		}
+	}
+	// Output:
+	//
+	// 0 to 0: 0
+	// 0 to 1: 0-1-2-3-5
+	// 0 to 2: 0-2-3-5
+	// 0 to 3: 0-3-5
+	// 0 to 4: 0-4-2-3-5
+	// 0 to 5: 0-5
 }

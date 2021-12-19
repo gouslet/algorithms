@@ -15,7 +15,7 @@ import (
 
 func main() {
 	// TopM 打印输入行中的最大M行
-	// TopM()
+	TopM()
 
 	// MultiwayMerge 多向归并：将多个有序的输入流归并成一个有序的输入流
 	MultiwayMerge()
@@ -24,7 +24,7 @@ func main() {
 
 type Item int
 
-func (this Item) Less(b pq.Key) bool {
+func (this Item) Less(b pq.Value) bool {
 	v, _ := b.(Item)
 	return this > v
 }
@@ -42,7 +42,7 @@ func TopM() {
 		log.Fatalln(err)
 	}
 	var M int = 5
-	pq := pq.NewHeapMaxPQWithSize(M + 1)
+	pq := pq.NewHeapPQWithSize(M + 1)
 
 	scanner := bufio.NewScanner(file)
 	for scanner.Scan() {
@@ -51,19 +51,19 @@ func TopM() {
 		fmt.Sscanf(line, "%d", &i)
 		pq.Insert(Item(i))
 		if pq.Size() > M {
-			pq.DelMax()
+			pq.DelExtre()
 		}
 	}
 
 	for !pq.IsEmpty() {
-		fmt.Printf("%d ", pq.DelMax())
+		fmt.Printf("%d ", pq.DelExtre())
 	}
 	fmt.Println()
 }
 
 type String string
 
-func (this String) Less(b pq.Key) bool {
+func (this String) Less(b pq.Value) bool {
 	v, _ := b.(String)
 	return this[0] > v[0]
 }
@@ -79,7 +79,7 @@ func MultiwayMerge() {
 		"../m3.txt",
 	}
 
-	pq := pq.NewIndexHeapMaxPQ(len(files))
+	pq := pq.NewIndexHeapPQ(len(files))
 	streams := []*bufio.Reader{}
 	finished := make([]bool, len(files))
 
@@ -100,9 +100,9 @@ func MultiwayMerge() {
 	}
 
 	for !pq.IsEmpty() {
-		fmt.Printf("%s ", pq.Max())
+		fmt.Printf("%s ", pq.Extre())
 
-		i := pq.DelMax()
+		i := pq.DelExtre()
 
 		if !finished[i] {
 			if s, err := streams[i].ReadBytes(' '); err == nil || err == io.EOF {

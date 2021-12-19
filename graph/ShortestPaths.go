@@ -1,28 +1,36 @@
 package graph
 
 import (
-	"algorithms/graph/util"
+	pq "algorithms/prioityqueue"
 	"math"
 )
 
 type SP struct {
-	distTo []float64       // 从s到点的已知最短路径长度
-	edgeTo []*DirectedEdge // 父链接数组
+	distTo []float64               // 从s到点的已知最短路径长度
+	edgeTo []*WeightedDirectedEdge // 父链接数组
 }
 
-func NewDijkstraSP(g EdgeWeightedDigraph, s int) *SP {
-	edgeTo := make([]*DirectedEdge, g.V())
+type distance float64
+
+func (this distance) Less(b pq.Value) bool {
+	v, _ := b.(distance)
+	return this > v
+}
+
+func NewDijkstraSP(g *WeightedEdgeDigraph, s int) *SP {
+	edgeTo := make([]*WeightedDirectedEdge, g.V())
 	distTo := make([]float64, g.V())
-	pq := util.NewIndexMinPQ(g.V())
+
+	pq := pq.NewIndexHeapPQ(g.V())
 
 	for v := 0; v < g.V(); v++ {
 		distTo[v] = math.MaxFloat64
 	}
 	distTo[s] = 0.0
 
-	pq.Insert(s, 0.0)
+	pq.Insert(s, distance(0.0))
 
-	relax := func(g EdgeWeightedDigraph, v int) {
+	relax := func(g WeightedEdgeDigraph, v int) {
 		for _, e := range g.Adj(v) {
 			w := e.To()
 			if l := distTo[v] + e.Weight(); distTo[w] > l {
@@ -30,14 +38,14 @@ func NewDijkstraSP(g EdgeWeightedDigraph, s int) *SP {
 				edgeTo[w] = e
 			}
 			if pq.Contains(w) {
-				pq.Set(w, distTo[w])
+				pq.Set(w, distance(distTo[w]))
 			} else {
-				pq.Insert(w, distTo[w])
+				pq.Insert(w, distance(distTo[w]))
 			}
 		}
 	}
 	for !pq.IsEmpty() {
-		relax(g, pq.DelMin())
+		relax(*g, pq.DelExtre())
 	}
 	return &SP{distTo, edgeTo}
 }
@@ -53,11 +61,11 @@ func (this SP) HasPathTo(v int) bool {
 }
 
 // 从顶点s到v的路径，如果不存在则为nil
-func (this SP) PathTo(v int) []*DirectedEdge {
+func (this SP) PathTo(v int) []*WeightedDirectedEdge {
 	if !this.HasPathTo(v) {
 		return nil
 	}
-	paths := []*DirectedEdge{}
+	paths := []*WeightedDirectedEdge{}
 	for e := this.edgeTo[v]; e != nil; e = this.edgeTo[e.From()] {
 		paths = append(paths, e)
 	}

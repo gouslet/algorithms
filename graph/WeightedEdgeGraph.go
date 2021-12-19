@@ -29,6 +29,10 @@ type WeightedEdgeGraph struct {
 	adj  [][]*Edge // 邻接表
 }
 
+// func NewWeightedEdgeGraphFrom(r *io.Reader) *WeightedEdgeGraph {
+
+// }
+
 func NewWeightedEdgeGraph(v int) *WeightedEdgeGraph {
 	adj := make([][]*Edge, v)
 	for i := 0; i < v; i++ {
