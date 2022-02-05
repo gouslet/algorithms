@@ -12,7 +12,7 @@ import (
 	"testing"
 )
 
-func TestLSDSort(t *testing.T) {
+func TestQuick3Sort(t *testing.T) {
 	_, crtfile, _, ok := runtime.Caller(0)
 	if !ok {
 		panic(errors.New("Can not get current file info"))
@@ -54,13 +54,13 @@ func TestLSDSort(t *testing.T) {
 			res = append(res, s)
 		}
 
-		if items = NewLSD(test.w, items).Sort(); !reflect.DeepEqual(items, res) {
+		if NewQuick3String(items).Sort(); !reflect.DeepEqual(items, res) {
 			t.Fatalf("got %v,want %v\n", items, res)
 		}
 	}
 }
 
-func ExampleLSDSort() {
+func ExampleQuick3Sort() {
 	_, crtfile, _, ok := runtime.Caller(0)
 	if !ok {
 		panic(errors.New("Can not get current file info"))
@@ -81,8 +81,8 @@ func ExampleLSDSort() {
 		a = append(a, s)
 	}
 
-	lsd := NewLSD(7, a)
-	for _, t := range lsd.Sort() {
+	NewQuick3String(a).Sort()
+	for _, t := range a {
 		fmt.Println(t)
 	}
 	// Output:

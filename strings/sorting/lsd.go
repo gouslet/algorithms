@@ -4,7 +4,7 @@ import (
 	"fmt"
 )
 
-var R = 256 // Ascii字符表长度
+const R = 256 // Ascii字符表长度
 
 type lsd struct {
 	w int // 通过前w个字符将a排序
@@ -34,7 +34,7 @@ func NewLSD(w int, a []string) *lsd {
 }
 
 // Sort 通过前w个字符将a排序
-func (l *lsd) LSDSort() []string {
+func (l *lsd) Sort() []string {
 	length := len(l.a)
 	aux := make([]string, length)
 
