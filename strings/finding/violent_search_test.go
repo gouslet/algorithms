@@ -94,7 +94,7 @@ func TestViolentSearch1(t *testing.T) {
 
 	for _, test := range tests {
 		if res := ViolentSearch1(test.txt, test.pattern); res != test.res {
-			t.Fatalf("ViolentSearch1(%s,%s)\ngot %d,want %d", test.txt, test.pattern, res, test.res)
+			t.Fatalf("ViolentSearch1(%#v,%#v)\ngot %d,want %d", test.txt, test.pattern, res, test.res)
 		}
 	}
 }
@@ -191,7 +191,7 @@ func TestViolentSearch2(t *testing.T) {
 
 	for _, test := range tests {
 		if res := ViolentSearch2(test.txt, test.pattern); res != test.res {
-			t.Fatalf("ViolentSearch2(%s,%s)\ngot %d,want %d", test.txt, test.pattern, res, test.res)
+			t.Fatalf("ViolentSearch2(%#v,%#v)\ngot %d,want %d", test.txt, test.pattern, res, test.res)
 		}
 	}
 }
