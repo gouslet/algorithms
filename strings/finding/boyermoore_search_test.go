@@ -93,7 +93,7 @@ func TestBoyerMooreSearch(t *testing.T) {
 	}
 
 	for _, test := range tests {
-		if res := BoyerMooreSearch(test.txt, test.pattern); res != test.res {
+		if res := NewBoyerMooreSearch(test.pattern).Search(test.txt); res != test.res {
 			t.Fatalf("BoyerMooreSearch(%#v,%#v)\ngot %d,want %d", test.txt, test.pattern, res, test.res)
 		}
 	}
