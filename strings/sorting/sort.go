@@ -1,4 +1,4 @@
-package strings
+package sorting
 
 type Sort interface {
 	Sort() []string

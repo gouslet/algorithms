@@ -1,4 +1,4 @@
-package strings
+package sorting
 
 type Item struct {
 	K int

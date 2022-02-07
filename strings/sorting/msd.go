@@ -1,6 +1,9 @@
-package strings
+package sorting
 
-import sorts "algorithms/sorts"
+import (
+	sorts "algorithms/sorts"
+	strings "algorithms/strings"
+)
 
 const M = 10 // 小数组的切换阈值
 var aux []string
@@ -30,7 +33,7 @@ func (m *msd) sort(lo, hi, d int) {
 
 	// 计算频率
 	for i := lo; i <= hi; i++ {
-		count[charAt(m.a[i], d)+2]++
+		count[strings.CharAt(m.a[i], d)+2]++
 	}
 
 	// 将频率转换为索引
@@ -40,8 +43,8 @@ func (m *msd) sort(lo, hi, d int) {
 
 	// 数据分类
 	for i := lo; i <= hi; i++ {
-		aux[count[charAt(m.a[i], d)+1]] = m.a[i]
-		count[charAt(m.a[i], d)+1]++
+		aux[count[strings.CharAt(m.a[i], d)+1]] = m.a[i]
+		count[strings.CharAt(m.a[i], d)+1]++
 	}
 
 	// 回写

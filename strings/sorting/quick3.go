@@ -1,4 +1,6 @@
-package strings
+package sorting
+
+import "algorithms/strings"
 
 type quick3String struct {
 	a []string
@@ -18,16 +20,16 @@ func (q *quick3String) sort(lo, hi, d int) {
 	}
 
 	lt, gt := lo, hi
-	v := charAt(q.a[lo], d)
+	v := strings.CharAt(q.a[lo], d)
 	i := lo + 1
 	for i <= gt {
-		t := charAt(q.a[i], d)
+		t := strings.CharAt(q.a[i], d)
 		if t < v {
-			swap(q.a, lt, i)
+			strings.Swap(q.a, lt, i)
 			lt++
 			i++
 		} else if t > v {
-			swap(q.a, i, gt)
+			strings.Swap(q.a, i, gt)
 			gt--
 		} else {
 			i++
