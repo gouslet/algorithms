@@ -9,8 +9,9 @@ import (
 
 func TestTriesArr(t *testing.T) {
 	tests := []struct {
-		pairs       map[string]int
-		prefix_pars map[string][]string
+		pairs          map[string]int
+		prefix_pars    map[string][]string
+		wildcard_pairs map[string][]string
 	}{
 		{
 			map[string]int{
@@ -20,10 +21,11 @@ func TestTriesArr(t *testing.T) {
 				"shore":  4,
 				"by":     5,
 				"she":    6,
+				"the":    7,
 			},
 			map[string][]string{
 				"": {
-					"sells", "shells", "she", "sea", "shore", "by",
+					"sells", "shells", "she", "sea", "shore", "by", "the",
 				},
 				"b": {
 					"by",
@@ -33,6 +35,18 @@ func TestTriesArr(t *testing.T) {
 				},
 				"sh": {
 					"shells", "she", "shore",
+				},
+			},
+			map[string][]string{
+				".": {},
+				"b.": {
+					"by",
+				},
+				".he": {
+					"the", "she",
+				},
+				"s..": {
+					"she", "sea",
 				},
 			},
 		},
@@ -46,34 +60,43 @@ func TestTriesArr(t *testing.T) {
 				"\\`~": 6,
 			},
 			nil,
+			nil,
 		},
 	}
 
 	for _, test := range tests {
-		tries_arr := NewTriesArr()
-		var keys []string
-		for k, v := range test.pairs {
-			tries_arr.Put(k, v)
-			t.Logf("Put(\"%s\",%v),size = %d\n", k, v, tries_arr.Size())
-			if b := tries_arr.Contains(k); !b {
-				t.Fatalf("Contains(\"%s\") = %v,want true", k, b)
+		t.Run("A=1", func(t *testing.T) {
+			tries_arr := NewTriesArr()
+			var keys []string
+			for k, v := range test.pairs {
+				tries_arr.Put(k, v)
+				t.Logf("Put(\"%s\",%v),size = %d\n", k, v, tries_arr.Size())
+				if b := tries_arr.Contains(k); !b {
+					t.Errorf("Contains(\"%s\") = %v,want true", k, b)
+				}
+				if b := tries_arr.Get(k); b != v {
+					t.Errorf("Get(\"%s\") = %v,want %v", k, b, v)
+				}
+				keys = append(keys, k)
 			}
-			if b := tries_arr.Get(k); b != v {
-				t.Fatalf("Get(\"%s\") = %v,want %v", k, b, v)
+			sort.Strings(keys)
+			if b := tries_arr.Keys(); !reflect.DeepEqual(b, keys) {
+				t.Errorf("Keys() = %v,want %v", b, keys)
 			}
-			keys = append(keys, k)
-		}
-		sort.Strings(keys)
-		if b := tries_arr.Keys(); !reflect.DeepEqual(b, keys) {
-			t.Fatalf("Keys() = %v,want %v", b, keys)
-		}
-		for pre, strs := range test.prefix_pars {
-			sort.Strings(strs)
-			if b := tries_arr.KeysWithPrefix(pre); !reflect.DeepEqual(b, strs) {
-				t.Fatalf("KeysWithPrefix(\"%s\") = %v,want %v", pre, b, strs)
+			for pre, strs := range test.prefix_pars {
+				sort.Strings(strs)
+				if b := tries_arr.KeysWithPrefix(pre); !reflect.DeepEqual(b, strs) {
+					t.Errorf("KeysWithPrefix(\"%s\") = %v,want %v", pre, b, strs)
+				}
 			}
-		}
-		t.Log("------------------------------")
+
+			for wpre, strs := range test.wildcard_pairs {
+				sort.Strings(strs)
+				if b := tries_arr.KeysThatMatch(wpre); !reflect.DeepEqual(b, strs) {
+					t.Errorf("KeysThatMatch(\"%s\") = %v,want %v", wpre, b, strs)
+				}
+			}
+		})
 	}
 }
 

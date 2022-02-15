@@ -1,4 +1,8 @@
+// package strings includes some algorithms about manipulating strings
 package strings
+
+// R ASCII表的元素个数
+const R = 256
 
 // charAt 将字符串中字符索引转换为数组索引
 func CharAt(s string, d int) int {

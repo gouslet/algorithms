@@ -8,19 +8,19 @@ package tries
 
 import "algorithms/strings"
 
-// tries_arr array based tries
+// tries_arr 基于数组的字典树结构
 type tries_arr struct {
 	children [strings.R]*tries_arr
 	val      any
 	size     int
 }
 
-// NewTriesArr constructor
+// NewTriesArr 构造函数
 func NewTriesArr() *tries_arr {
 	return &tries_arr{}
 }
 
-// Put inserts a pair of key and value into the tries
+// Put 插入键值对
 func (t *tries_arr) Put(key string, val any) {
 	if key == "" {
 		t.val = val
@@ -41,7 +41,7 @@ func (t *tries_arr) Put(key string, val any) {
 	}
 }
 
-// Get returns the value paired with a key,or nil if absent
+// Get 查找字符串对应的值，如果不存在，则返回nil
 func (t *tries_arr) Get(key string) any {
 	cur := t
 	for _, c := range key {
@@ -54,12 +54,12 @@ func (t *tries_arr) Get(key string) any {
 	return t.val
 }
 
-// Size returns the number of key-value pairs in the tries
+// Size 获取键值对的数量
 func (t tries_arr) Size() int {
 	return t.size
 }
 
-// Contains returns if their is a value paired with key in the tries
+// Contains 表中是否存在键为key的值
 func (t *tries_arr) Contains(key string) bool {
 	if key == "" {
 		return t.val != nil
@@ -77,16 +77,15 @@ func (t *tries_arr) Contains(key string) bool {
 	return key == t.val
 }
 
-// Keys gets all strings in the tries
+// Keys 返回所有键的列表
 func (t *tries_arr) Keys() (res []string) {
 	res = t.KeysWithPrefix("")
 
 	return
 }
 
-// KeysWithPrefix returns all the keys having pre as prefix
+// KeysWithPrefix
 func (t *tries_arr) KeysWithPrefix(pre string) (res []string) {
-	res = []string{}
 	if t == nil {
 		return
 	}
@@ -99,65 +98,43 @@ func (t *tries_arr) KeysWithPrefix(pre string) (res []string) {
 			res = append(res, pre)
 		}
 	}
-	// collect
-	var collect func(x *tries_arr, key string) []string
-
-	collect = func(x *tries_arr, key string) []string {
-		strs := []string{}
-
-		if x == nil {
-			return strs
-		}
-
-		if x.val != nil {
-			strs = append(strs, key)
-		}
-
-		for i, c := range x.children {
-			if c != nil {
-				strs = append(strs, collect(c, key+string(rune(i)))...)
-			}
-		}
-		return strs
-	}
-
-	res = append(res, collect(t, pre)...)
+	res = append(res, t.collect(pre, ".")...)
 
 	return
 }
 
-// KeysThatMatch returns all the keys that matches pattern,where . matches any byte
+// KeysThatMatch
 func (t *tries_arr) KeysThatMatch(pattern string) (res []string) {
-	res = []string{}
+	res = append(res, t.collect("", pattern)...)
+	return
+}
+
+// collect
+func (t *tries_arr) collect(key, pattern string) []string {
+	res := []string{}
 
 	if t == nil {
-		return
+		return res
 	}
 
-	// collect
-	var collect func(x *tries_arr, key, pattern string) []string
-
-	collect = func(x *tries_arr, key, pattern string) []string {
-		strs := []string{}
-
-		if x == nil {
+	d := len(key)
+	f := len(pattern)
+	if f == d {
+		if t.val != nil {
+			res = append(res, key)
 			return res
 		}
-
-		if kl, pl := len(key), len(pattern); kl == pl && x.val != nil {
-			strs = append(strs, key)
-		} else if kl < pl {
-			for i, c := range x.children {
-				if pattern[kl] == '.' || int(pattern[kl]) == i {
-					strs = append(strs, collect(c, key+string(rune(i)), pattern)...)
-				}
-			}
+	} else {
+		if f < d {
+			return res
 		}
-
-		return strs
 	}
 
-	res = append(res, collect(t, "", pattern)...)
+	for i, c := range t.children {
+		if pattern[d] == '.' || int(pattern[d]) == i {
+			res = append(res, c.collect(key+string(rune(i)), pattern)...)
+		}
+	}
 
-	return
+	return res
 }

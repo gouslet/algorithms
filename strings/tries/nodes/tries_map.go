@@ -1,10 +1,10 @@
 package tries
 
-const R = 256
+import "algorithms/strings"
 
 type node struct {
 	size int
-	next [R]*node
+	next [strings.R]*node
 	val  any
 }
 
