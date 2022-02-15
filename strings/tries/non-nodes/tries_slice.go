@@ -1,38 +1,57 @@
 // CreatedAt: 2022-02-13 18:29:23
 // LastEditors: Elon Chen
 // LastEditTime: 2022-02-15 18:58:25
-// RelativePath: \algorithms\strings\tries\non-nodes\tries_array.go
+// RelativePath: \algorithms\strings\tries\non-nodes\tries_slice.go
 
 // package tries includes all kinds of implementation of tries
 package tries
 
-import "algorithms/strings"
+// find returns a sub-tries whose root matches ch
+func (t *tries_slice) find(ch rune) *tries_slice {
+	if t == nil || t.children == nil {
+		return nil
+	}
 
-// tries_arr array based tries
-type tries_arr struct {
-	children [strings.R]*tries_arr
+	for _, x := range t.children {
+		if x.char == ch {
+			return x
+		}
+	}
+	return nil
+}
+
+// tries_slice slice based tries
+type tries_slice struct {
+	children []*tries_slice
+	char     rune
 	val      any
 	size     int
 }
 
 // NewTriesArr constructor
-func NewTriesArr() *tries_arr {
-	return &tries_arr{}
+func NewTriesSlice() *tries_slice {
+	return &tries_slice{
+		children: make([]*tries_slice, 0),
+	}
 }
 
 // Put inserts a pair of key and value into the tries
-func (t *tries_arr) Put(key string, val any) {
+func (t *tries_slice) Put(key string, val any) {
 	if key == "" {
 		t.val = val
 		t.size++
 	}
 	cur := t
 	for i, c := range key {
-		if cur.children[c] == nil {
-			cur.children[c] = new(tries_arr)
+		if child := cur.find(c); child == nil {
+			child = &tries_slice{
+				children: make([]*tries_slice, 0),
+				char:     c,
+			}
+			cur.children = append(cur.children, child)
+		} else {
+			cur = child
 		}
-
-		cur = cur.children[c]
 
 		if i == len(key)-1 {
 			cur.val = val
@@ -42,10 +61,10 @@ func (t *tries_arr) Put(key string, val any) {
 }
 
 // Get returns the value paired with a key,or nil if absent
-func (t *tries_arr) Get(key string) any {
+func (t *tries_slice) Get(key string) any {
 	cur := t
 	for _, c := range key {
-		cur = cur.children[c]
+		cur = cur.find(c)
 
 		if cur.val != nil && byte(c) == key[len(key)-1] {
 			return cur.val
@@ -55,23 +74,23 @@ func (t *tries_arr) Get(key string) any {
 }
 
 // Size returns the number of key-value pairs in the tries
-func (t tries_arr) Size() int {
+func (t tries_slice) Size() int {
 	return t.size
 }
 
 // Delete removes key and its value from the tries
-func (t *tries_arr) Delete(key string) {
+func (t *tries_slice) Delete(key string) {
 
 }
 
 // Contains returns if their is a value paired with key in the tries
-func (t *tries_arr) Contains(key string) bool {
+func (t *tries_slice) Contains(key string) bool {
 	if key == "" {
 		return t.val != nil
 	}
 	cur := t
 	for _, c := range key {
-		if k := cur.children[c]; k == nil {
+		if k := cur.find(c); k == nil {
 			return false
 		} else {
 			cur = k
@@ -84,21 +103,21 @@ func (t *tries_arr) Contains(key string) bool {
 }
 
 // Keys gets all strings in the tries
-func (t *tries_arr) Keys() (res []string) {
+func (t *tries_slice) Keys() (res []string) {
 	res = t.KeysWithPrefix("")
 
 	return
 }
 
 // KeysWithPrefix returns all the keys having pre as prefix
-func (t *tries_arr) KeysWithPrefix(pre string) (res []string) {
+func (t *tries_slice) KeysWithPrefix(pre string) (res []string) {
 	res = []string{}
 	if t == nil {
 		return
 	}
 
 	for i, c := range pre {
-		if b := t.children[c]; b != nil {
+		if b := t.find(c); b != nil {
 			t = b
 		}
 		if t.val != nil && i == len(pre)-1 {
@@ -106,9 +125,9 @@ func (t *tries_arr) KeysWithPrefix(pre string) (res []string) {
 		}
 	}
 	// collect
-	var collect func(x *tries_arr, key string) []string
+	var collect func(x *tries_slice, key string) []string
 
-	collect = func(x *tries_arr, key string) []string {
+	collect = func(x *tries_slice, key string) []string {
 		strs := []string{}
 
 		if x == nil {
@@ -119,9 +138,9 @@ func (t *tries_arr) KeysWithPrefix(pre string) (res []string) {
 			strs = append(strs, key)
 		}
 
-		for i, c := range x.children {
+		for _, c := range x.children {
 			if c != nil {
-				strs = append(strs, collect(c, key+string(rune(i)))...)
+				strs = append(strs, collect(c, key+string(c.char))...)
 			}
 		}
 		return strs
@@ -133,7 +152,7 @@ func (t *tries_arr) KeysWithPrefix(pre string) (res []string) {
 }
 
 // KeysThatMatch returns all the keys that matches pattern,where '.' matches any byte
-func (t *tries_arr) KeysThatMatch(pattern string) (res []string) {
+func (t *tries_slice) KeysThatMatch(pattern string) (res []string) {
 	res = []string{}
 
 	if t == nil {
@@ -141,9 +160,9 @@ func (t *tries_arr) KeysThatMatch(pattern string) (res []string) {
 	}
 
 	// collect
-	var collect func(x *tries_arr, key, pattern string) []string
+	var collect func(x *tries_slice, key, pattern string) []string
 
-	collect = func(x *tries_arr, key, pattern string) []string {
+	collect = func(x *tries_slice, key, pattern string) []string {
 		strs := []string{}
 
 		if x == nil {
@@ -153,9 +172,9 @@ func (t *tries_arr) KeysThatMatch(pattern string) (res []string) {
 		if kl, pl := len(key), len(pattern); kl == pl && x.val != nil {
 			strs = append(strs, key)
 		} else if kl < pl {
-			for i, c := range x.children {
-				if pattern[kl] == '.' || int(pattern[kl]) == i {
-					strs = append(strs, collect(c, key+string(rune(i)), pattern)...)
+			for _, c := range x.children {
+				if pattern[kl] == '.' || rune(pattern[kl]) == c.char {
+					strs = append(strs, collect(c, key+string(c.char), pattern)...)
 				}
 			}
 		}
@@ -169,7 +188,7 @@ func (t *tries_arr) KeysThatMatch(pattern string) (res []string) {
 }
 
 // LongestPrefixOf returns the longest key that has a prefix of pre
-func (t *tries_arr) LongestPrefixOf(pre string) string {
+func (t *tries_slice) LongestPrefixOf(pre string) string {
 	//Todo
 	return ""
 }

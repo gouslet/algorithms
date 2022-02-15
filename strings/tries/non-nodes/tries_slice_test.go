@@ -7,7 +7,7 @@ import (
 	"testing"
 )
 
-func TestTriesArr(t *testing.T) {
+func TestTriesSlice(t *testing.T) {
 	tests := []struct {
 		pairs          map[string]int
 		prefix_pairs   map[string][]string
@@ -66,33 +66,39 @@ func TestTriesArr(t *testing.T) {
 
 	for _, test := range tests {
 		t.Run("A=1", func(t *testing.T) {
-			tries_arr := NewTriesArr()
+			tries_slice := NewTriesMap()
 			var keys []string
 			for k, v := range test.pairs {
-				tries_arr.Put(k, v)
-				t.Logf("Put(\"%s\",%v),size = %d\n", k, v, tries_arr.Size())
-				if b := tries_arr.Contains(k); !b {
+				tries_slice.Put(k, v)
+				t.Logf("Put(\"%s\",%v),size = %d\n", k, v, tries_slice.Size())
+				if b := tries_slice.Contains(k); !b {
 					t.Errorf("Contains(\"%s\") = %v,want true", k, b)
 				}
-				if b := tries_arr.Get(k); b != v {
+				if b := tries_slice.Get(k); b != v {
 					t.Errorf("Get(\"%s\") = %v,want %v", k, b, v)
 				}
 				keys = append(keys, k)
 			}
 			sort.Strings(keys)
-			if b := tries_arr.Keys(); !reflect.DeepEqual(b, keys) {
+			b := tries_slice.Keys()
+			sort.Strings(b)
+			if !reflect.DeepEqual(b, keys) {
 				t.Errorf("Keys() = %v,want %v", b, keys)
 			}
 			for pre, strs := range test.prefix_pairs {
 				sort.Strings(strs)
-				if b := tries_arr.KeysWithPrefix(pre); !reflect.DeepEqual(b, strs) {
+				b := tries_slice.KeysWithPrefix(pre)
+				sort.Strings(b)
+				if !reflect.DeepEqual(b, strs) {
 					t.Errorf("KeysWithPrefix(\"%s\") = %v,want %v", pre, b, strs)
 				}
 			}
 
 			for wpre, strs := range test.wildcard_pairs {
 				sort.Strings(strs)
-				if b := tries_arr.KeysThatMatch(wpre); !reflect.DeepEqual(b, strs) {
+				b := tries_slice.KeysThatMatch(wpre)
+				sort.Strings(b)
+				if !reflect.DeepEqual(b, strs) {
 					t.Errorf("KeysThatMatch(\"%s\") = %v,want %v", wpre, b, strs)
 				}
 			}
@@ -100,10 +106,10 @@ func TestTriesArr(t *testing.T) {
 	}
 }
 
-func Example() {
+func ExampleTrriesslice() {
 	tests := []struct {
-		pairs        map[string]int
-		prefix_pairs map[string][]string
+		pairs       map[string]int
+		prefix_pars map[string][]string
 	}{
 		{
 			map[string]int{
@@ -143,19 +149,19 @@ func Example() {
 	}
 
 	for _, test := range tests {
-		tries_arr := NewTriesArr()
+		tries_slice := NewTriesSlice()
 		var keys []string
 		for k, v := range test.pairs {
-			tries_arr.Put(k, v)
-			fmt.Printf("Put(\"%s\",%v),size = %d\n", k, v, tries_arr.Size())
-			fmt.Printf("Contains(\"%s\") = %v,want true\n", k, tries_arr.Contains(k))
+			tries_slice.Put(k, v)
+			fmt.Printf("Put(\"%s\",%v),size = %d\n", k, v, tries_slice.Size())
+			fmt.Printf("Contains(\"%s\") = %v,want true\n", k, tries_slice.Contains(k))
 			keys = append(keys, k)
 		}
 
-		b := tries_arr.Keys()
+		b := tries_slice.Keys()
 		fmt.Printf("Keys() = %v,want %v\n", b, keys)
 
-		for pre, strs := range test.prefix_pairs {
+		for pre, strs := range test.prefix_pars {
 			fmt.Printf("KeysWithPrefix(\"%s\") = %v,want %v\n", pre, b, strs)
 		}
 		fmt.Println("------------------------------")

@@ -5,18 +5,18 @@
 
 package tries
 
-import "algorithms/strings"
-
-// tries_map 基于数组的字典树结构
+// tries_map map based tries
 type tries_map struct {
-	children [strings.R]*tries_map
+	children map[rune]*tries_map
 	val      any
 	size     int
 }
 
-// NewTriesArr 构造函数
-func NewTrieMap() *tries_map {
-	return &tries_map{}
+// NewTriesArr constructor
+func NewTriesMap() *tries_map {
+	return &tries_map{
+		children: make(map[rune]*tries_map),
+	}
 }
 
 // Put 插入键值对
@@ -27,8 +27,10 @@ func (t *tries_map) Put(key string, val any) {
 	}
 	cur := t
 	for i, c := range key {
-		if cur.children[c] == nil {
-			cur.children[c] = new(tries_map)
+		if _, ok := cur.children[c]; !ok {
+			cur.children[c] = &tries_map{
+				children: make(map[rune]*tries_map),
+			}
 		}
 
 		cur = cur.children[c]
@@ -65,10 +67,11 @@ func (t *tries_map) Contains(key string) bool {
 	}
 	cur := t
 	for _, c := range key {
-		if cur.children[c] == nil {
+		if k := cur.children[c]; k == nil {
 			return false
+		} else {
+			cur = k
 		}
-		cur = cur.children[c]
 		if cur.val != nil {
 			return true
 		}
@@ -83,7 +86,9 @@ func (t *tries_map) Keys() (res []string) {
 	return
 }
 
+// KeysWithPrefix returns all the keys having pre as prefix
 func (t *tries_map) KeysWithPrefix(pre string) (res []string) {
+	res = []string{}
 	if t == nil {
 		return
 	}
@@ -96,41 +101,71 @@ func (t *tries_map) KeysWithPrefix(pre string) (res []string) {
 			res = append(res, pre)
 		}
 	}
-	res = append(res, t.collect(pre, ".")...)
+	// collect
+	var collect func(x *tries_map, key string) []string
+
+	collect = func(x *tries_map, key string) []string {
+		strs := []string{}
+
+		if x == nil {
+			return strs
+		}
+
+		if x.val != nil {
+			strs = append(strs, key)
+		}
+
+		for i, c := range x.children {
+			if c != nil {
+				strs = append(strs, collect(c, key+string(i))...)
+			}
+		}
+		return strs
+	}
+
+	res = append(res, collect(t, pre)...)
 
 	return
 }
 
+// KeysThatMatch returns all the keys that matches pattern,where '.' matches any byte
 func (t *tries_map) KeysThatMatch(pattern string) (res []string) {
-	res = append(res, t.collect("", pattern)...)
-	return
-}
-
-func (t *tries_map) collect(key, pattern string) []string {
-	res := []string{}
+	res = []string{}
 
 	if t == nil {
-		return res
+		return
 	}
 
-	d := len(key)
-	f := len(pattern)
-	if f == d {
-		if t.val != nil {
-			res = append(res, key)
+	// collect
+	var collect func(x *tries_map, key, pattern string) []string
+
+	collect = func(x *tries_map, key, pattern string) []string {
+		strs := []string{}
+
+		if x == nil {
 			return res
 		}
-	} else {
-		if f < d {
-			return res
+
+		if kl, pl := len(key), len(pattern); kl == pl && x.val != nil {
+			strs = append(strs, key)
+		} else if kl < pl {
+			for i, c := range x.children {
+				if pattern[kl] == '.' || rune(pattern[kl]) == i {
+					strs = append(strs, collect(c, key+string(rune(i)), pattern)...)
+				}
+			}
 		}
+
+		return strs
 	}
 
-	for i, c := range t.children {
-		if pattern[d] == '.' || int(pattern[d]) == i {
-			res = append(res, c.collect(key+string(rune(i)), pattern)...)
-		}
-	}
+	res = append(res, collect(t, "", pattern)...)
 
-	return res
+	return
+}
+
+// LongestPrefixOf returns the longest key that has a prefix of pre
+func (t *tries_map) LongestPrefixOf(pre string) string {
+	//Todo
+	return ""
 }
