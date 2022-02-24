@@ -74,6 +74,9 @@ func TestTriesArr(t *testing.T) {
 				if b := tries_arr.Contains(k); !b {
 					t.Errorf("Contains(\"%s\") = %v,want true", k, b)
 				}
+				if b := tries_arr.Contains(k + "#"); b {
+					t.Errorf("Contains(\"%s\") = %v,want false", k, b)
+				}
 				if b := tries_arr.Get(k); b != v {
 					t.Errorf("Get(\"%s\") = %v,want %v", k, b, v)
 				}

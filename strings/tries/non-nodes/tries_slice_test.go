@@ -74,6 +74,9 @@ func TestTriesSlice(t *testing.T) {
 				if b := tries_slice.Contains(k); !b {
 					t.Errorf("Contains(\"%s\") = %v,want true", k, b)
 				}
+				if b := tries_slice.Contains(k + "#"); b {
+					t.Errorf("Contains(\"%s\") = %v,want false", k, b)
+				}
 				if b := tries_slice.Get(k); b != v {
 					t.Errorf("Get(\"%s\") = %v,want %v", k, b, v)
 				}

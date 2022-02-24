@@ -70,17 +70,17 @@ func (t *tries_arr) Contains(key string) bool {
 		return t.val != nil
 	}
 	cur := t
-	for _, c := range key {
+	for i, c := range key {
 		if k := cur.children[c]; k == nil {
 			return false
 		} else {
 			cur = k
 		}
-		if cur.val != nil {
+		if i == len(key)-1 && cur.val != nil {
 			return true
 		}
 	}
-	return key == t.val
+	return false
 }
 
 // Keys gets all strings in the tries

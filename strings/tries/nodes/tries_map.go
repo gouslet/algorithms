@@ -33,7 +33,7 @@ func (t tries) size(x *node) int {
 		cnt++
 	}
 
-	for c := 0; c < R; c++ {
+	for c := 0; c < strings.R; c++ {
 		cnt += t.size(x.next[c])
 	}
 
@@ -119,7 +119,7 @@ func (t *tries) delete(x *node, key string, d int) *node {
 		return x
 	}
 
-	for c := 0; c < R; c++ {
+	for c := 0; c < strings.R; c++ {
 		if x.next[c] != r {
 			return x
 		}
