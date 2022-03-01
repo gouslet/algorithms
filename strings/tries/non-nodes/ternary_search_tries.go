@@ -22,12 +22,12 @@ func NewTST() *tst {
 // Put inserts a pair of key and value into the tries
 func (t *tst) Put(key string, val any) {
 	t.put(key, val, 0)
+	t.size++
 }
 
 func (t *tst) put(key string, val any, d int) *tst {
 	if key == "" {
 		t.val = val
-		t.size++
 		return t
 	}
 	ch := rune(key[d])
@@ -44,7 +44,6 @@ func (t *tst) put(key string, val any, d int) *tst {
 		t.mid = t.mid.put(key, val, d+1)
 	} else {
 		t.val = val
-		t.size++
 	}
 
 	return t
@@ -131,20 +130,35 @@ func (t *tst) Keys() (res []string) {
 }
 
 // KeysWithPrefix returns all the keys having pre as prefix
-func (t *tst) KeysWithPrefix(pre string) (res []string) {
-	res = []string{}
+func (t *tst) KeysWithPrefix(pre string) []string {
+	res := []string{}
 	if t == nil {
-		return
+		return res
+	}
+	if pre == "" {
+		if t.char == 0 && t.val != nil {
+			res = append(res, "")
+		}
 	}
 
-	for i, c := range pre {
-		if b := t.left; b != nil {
-			t = b
-			c += 1
+	for i, l := 0, len(pre); i < l; {
+		b := rune(pre[i])
+		if t == nil {
+			break
 		}
-		if t.val != nil && i == len(pre)-1 {
-			res = append(res, pre)
+
+		if t.char > b {
+			t = t.left
+		} else if t.char < b {
+			t = t.right
+		} else {
+			if t.val != nil && i == len(pre)-1 {
+				res = append(res, pre)
+			}
+			t = t.mid
+			i++
 		}
+
 	}
 	// collect
 	var collect func(x *tst, key string) []string
@@ -155,20 +169,22 @@ func (t *tst) KeysWithPrefix(pre string) (res []string) {
 		if x == nil {
 			return strs
 		}
-
-		if x.val != nil {
-			strs = append(strs, key)
+		s := key
+		if ch := x.char; ch != 0 {
+			s += string(ch)
+			if x.val != nil {
+				strs = append(strs, s)
+			}
 		}
-
-		if x != nil {
-			strs = append(strs, collect(x, key+string(rune(1)))...)
-		}
+		strs = append(strs, collect(x.mid, s)...)
+		strs = append(strs, collect(x.left, key)...)
+		strs = append(strs, collect(x.right, key)...)
 		return strs
 	}
 
 	res = append(res, collect(t, pre)...)
 
-	return
+	return res
 }
 
 // KeysThatMatch returns all the keys that matches pattern,where '.' matches any byte
@@ -193,7 +209,7 @@ func (t *tst) KeysThatMatch(pattern string) (res []string) {
 			strs = append(strs, key)
 		} else if kl < pl {
 			if pattern[kl] == '.' || int(pattern[kl]) == 1 {
-				strs = append(strs, collect(x, key+string(rune(1)), pattern)...)
+				strs = append(strs, collect(x, key, pattern)...)
 			}
 		}
 

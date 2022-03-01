@@ -52,14 +52,37 @@ func TestTernarySearchTries(t *testing.T) {
 		},
 		{
 			map[string]int{
-				"":     1,
-				" ":    2,
-				"sea":  3,
-				"_":    4,
-				"'\"":  5,
-				"\\`~": 6,
+				"":         1,
+				" ":        2,
+				"sea":      3,
+				"_":        4,
+				"'\"":      5,
+				"\\`~":     6,
+				"./&_+-*%": 7,
 			},
-			nil,
+			map[string][]string{
+				"": {
+					"",
+					" ",
+					"sea",
+					"_",
+					"'\"",
+					"\\`~",
+					"./&_+-*%",
+				},
+				" ": {
+					" ",
+				},
+				"s": {
+					"sea",
+				},
+				"_": {
+					"_",
+				},
+				"'": {
+					"'\"",
+				},
+			},
 			nil,
 		},
 	}
@@ -83,30 +106,32 @@ func TestTernarySearchTries(t *testing.T) {
 
 			t.Run("Keys", func(t *testing.T) {
 				sort.Strings(keys)
-				if b := tst.Keys(); !reflect.DeepEqual(b, keys) {
+				b := tst.Keys()
+				sort.Strings(b)
+				if !reflect.DeepEqual(b, keys) {
 					t.Errorf("Keys() = %v,want %v", b, keys)
 				}
 			})
 
-			// t.Run("KeysWithPrefix", func(t *testing.T) {
-
-			// 	for pre, strs := range test.prefix_pairs {
-			// 		sort.Strings(strs)
-			// 		if b := tst.KeysWithPrefix(pre); !reflect.DeepEqual(b, strs) {
-			// 			t.Errorf("KeysWithPrefix(%q) = %v,want %v", pre, b, strs)
-			// 		}
-			// 	}
-			// })
-			// t.Run("KeysThatMatch", func(t *testing.T) {
-			// 	for wpre, strs := range test.wildcard_pairs {
-			// 		sort.Strings(strs)
-			// 		if b := tst.KeysThatMatch(wpre); !reflect.DeepEqual(b, strs) {
-			// 			t.Errorf("KeysThatMatch(%q) = %v,want %v", wpre, b, strs)
-			// 		}
-			// 	}
-			// })
 		}
-
+		t.Run("KeysWithPrefix", func(t *testing.T) {
+			for pre, strs := range test.prefix_pairs {
+				sort.Strings(strs)
+				b := tst.KeysWithPrefix(pre)
+				sort.Strings(b)
+				if !reflect.DeepEqual(b, strs) {
+					t.Errorf("KeysWithPrefix(%q) = %v,want %v", pre, b, strs)
+				}
+			}
+		})
+		// t.Run("KeysThatMatch", func(t *testing.T) {
+		// 	for wpre, strs := range test.wildcard_pairs {
+		// 		sort.Strings(strs)
+		// 		if b := tst.KeysThatMatch(wpre); !reflect.DeepEqual(b, strs) {
+		// 			t.Errorf("KeysThatMatch(%q) = %v,want %v", wpre, b, strs)
+		// 		}
+		// 	}
+		// })
 	}
 }
 
