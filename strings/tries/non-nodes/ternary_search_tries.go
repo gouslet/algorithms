@@ -195,6 +195,10 @@ func (t *tst) KeysThatMatch(pattern string) (res []string) {
 		return
 	}
 
+	if pattern == "" && t.char == 0 && t.val != nil {
+		res = append(res, "")
+		return
+	}
 	// collect
 	var collect func(x *tst, key, pattern string) []string
 
@@ -202,18 +206,35 @@ func (t *tst) KeysThatMatch(pattern string) (res []string) {
 		strs := []string{}
 
 		if x == nil {
-			return res
+			return strs
 		}
 
-		if kl, pl := len(key), len(pattern); kl == pl && x.val != nil {
-			strs = append(strs, key)
-		} else if kl < pl {
-			if pattern[kl] == '.' || int(pattern[kl]) == 1 {
-				strs = append(strs, collect(x, key, pattern)...)
+		kl, pl := len(key), len(pattern)
+
+		if kl < pl {
+			ch := rune(pattern[kl])
+			mkey := key
+
+			if ch == '.' || ch == x.char {
+				if x.char > 0 {
+					mkey += string(x.char)
+					if pl-kl == 1 && x.val != nil {
+						strs = append(strs, mkey)
+					}
+				}
+
+				strs = append(strs, collect(x.left, key, pattern)...)
+				strs = append(strs, collect(x.mid, mkey, pattern)...)
+				strs = append(strs, collect(x.right, key, pattern)...)
+			} else if ch > x.char {
+				strs = append(strs, collect(x.right, key, pattern)...)
+			} else if ch < x.char {
+				strs = append(strs, collect(x.left, key, pattern)...)
 			}
 		}
 
 		return strs
+
 	}
 
 	res = append(res, collect(t, "", pattern)...)
