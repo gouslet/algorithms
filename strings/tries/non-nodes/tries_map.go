@@ -1,7 +1,16 @@
-// CreatedAt: 2022-02-15 16:44:46
-// LastEditors: Elon Chen
-// LastEditTime: 2022-02-15 19:40:37
-// RelativePath: \algorithms\strings\tries\non-nodes\tries_map.go
+/*
+ * File: \strings\tries\non-nodes\tries_map.go                                 *
+ * Project: algorithms                                                         *
+ * Created At: Tuesday, 2022/02/15 , 16:44:46                                  *
+ * Author: elchn                                                               *
+ * -----                                                                       *
+ * Last Modified: Saturday, 2022/03/5 , 00:17:08                               *
+ * Modified By: elchn                                                          *
+ * -----                                                                       *
+ * HISTORY:                                                                    *
+ * Date      	By	Comments                                                   *
+ * ----------	---	---------------------------------------------------------  *
+ */
 
 package tries
 

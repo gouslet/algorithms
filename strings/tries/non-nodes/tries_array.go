@@ -1,9 +1,17 @@
-// CreatedAt: 2022-02-13 18:29:23
-// LastEditors: Elon Chen
-// LastEditTime: 2022-02-15 18:58:25
-// RelativePath: \algorithms\strings\tries\non-nodes\tries_array.go
+/*
+ * File: \strings\tries\non-nodes\tries_array.go                               *
+ * Project: algorithms                                                         *
+ * Created At: Sunday, 2022/02/13 , 18:29:23                                   *
+ * Author: elchn                                                               *
+ * -----                                                                       *
+ * Last Modified: Saturday, 2022/03/5 , 00:16:32                               *
+ * Modified By: elchn                                                          *
+ * -----                                                                       *
+ * HISTORY:                                                                    *
+ * Date      	By	Comments                                                   *
+ * ----------	---	---------------------------------------------------------  *
+ */
 
-// package tries includes all kinds of implementation of tries
 package tries
 
 import "algorithms/strings"

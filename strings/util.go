@@ -1,4 +1,4 @@
-// package strings includes some algorithms about manipulating strings
+// Package strings includes some algorithms about manipulating strings
 package strings
 
 // R ASCII表的元素个数

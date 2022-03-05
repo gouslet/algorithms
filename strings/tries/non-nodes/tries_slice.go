@@ -1,9 +1,17 @@
-// CreatedAt: 2022-02-13 18:29:23
-// LastEditors: Elon Chen
-// LastEditTime: 2022-02-15 18:58:25
-// RelativePath: \algorithms\strings\tries\non-nodes\tries_slice.go
+/*
+ * File: \strings\tries\non-nodes\tries_slice.go                               *
+ * Project: algorithms                                                         *
+ * Created At: Wednesday, 2022/02/16 , 01:29:08                                *
+ * Author: elchn                                                               *
+ * -----                                                                       *
+ * Last Modified: Saturday, 2022/03/5 , 00:18:34                               *
+ * Modified By: elchn                                                          *
+ * -----                                                                       *
+ * HISTORY:                                                                    *
+ * Date      	By	Comments                                                   *
+ * ----------	---	---------------------------------------------------------  *
+ */
 
-// package tries includes all kinds of implementation of tries
 package tries
 
 // find returns a sub-tries whose root matches ch

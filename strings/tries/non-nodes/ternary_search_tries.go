@@ -1,9 +1,18 @@
-// CreatedAt: 2022-02-13 18:29:23
-// LastEditors: Elon Chen
-// LastEditTime: 2022-02-15 18:58:25
-// RelativePath: \algorithms\strings\tries\non-nodes\tstay.go
+/*
+ * File: \strings\tries\non-nodes\ternary_search_tries.go                      *
+ * Project: algorithms                                                         *
+ * Created At: Wednesday, 2022/02/16 , 21:26:29                                *
+ * Author: elchn                                                               *
+ * -----                                                                       *
+ * Last Modified: Saturday, 2022/03/5 , 00:24:50                               *
+ * Modified By: elchn                                                          *
+ * -----                                                                       *
+ * HISTORY:                                                                    *
+ * Date      	By	Comments                                                   *
+ * ----------	---	---------------------------------------------------------  *
+ */
 
-// package tries includes all kinds of implementation of tries
+// Package tries includes all kinds of implementation of tries
 package tries
 
 // ternary search tries

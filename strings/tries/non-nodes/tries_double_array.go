@@ -1,9 +1,17 @@
-// CreatedAt: 2022-02-13 18:29:23
-// LastEditors: Elon Chen
-// LastEditTime: 2022-02-15 18:58:25
-// RelativePath: \algorithms\strings\tries\non-nodes\tries_double_array.go
+/*
+ * File: \strings\tries\non-nodes\tries_double_array.go                        *
+ * Project: algorithms                                                         *
+ * Created At: Wednesday, 2022/02/16 , 02:01:52                                *
+ * Author: elchn                                                               *
+ * -----                                                                       *
+ * Last Modified: Saturday, 2022/03/5 , 00:19:00                               *
+ * Modified By: elchn                                                          *
+ * -----                                                                       *
+ * HISTORY:                                                                    *
+ * Date      	By	Comments                                                   *
+ * ----------	---	---------------------------------------------------------  *
+ */
 
-// package tries includes all kinds of implementation of tries
 package tries
 
 // find returns a sub-tries whose root matches ch
