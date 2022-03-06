@@ -4,7 +4,7 @@
  * Created At: Wednesday, 2022/02/16 , 21:26:29                                *
  * Author: elchn                                                               *
  * -----                                                                       *
- * Last Modified: Saturday, 2022/03/5 , 00:24:50                               *
+ * Last Modified: Monday, 2022/03/7 , 01:00:11                                 *
  * Modified By: elchn                                                          *
  * -----                                                                       *
  * HISTORY:                                                                    *
@@ -254,5 +254,46 @@ func (t *tst) KeysThatMatch(pattern string) (res []string) {
 // LongestPrefixOf returns the longest key that has a prefix of pre
 func (t *tst) LongestPrefixOf(pre string) string {
 	//Todo
-	return ""
+
+	var search func(x *tst, s string, d, length int) int
+
+	search = func(x *tst, s string, d, length int) int {
+		if x == nil {
+			return length
+		}
+		if s == "" {
+			return -1
+		}
+		ch := rune(s[d])
+		var longest1 int
+		var longest2 int
+		var longest3 int
+		if ch == x.char {
+			if x.val != nil {
+				length = d
+			}
+			if d == len(s)-1 {
+				longest1 = length
+			} else {
+				longest1 = search(x.mid, s, d+1, length)
+			}
+		} else if ch < x.char {
+			longest2 = search(x.left, s, d, length)
+		} else {
+			longest3 = search(x.right, s, d, length)
+		}
+
+		longest := longest1
+		if longest2 > longest {
+			longest = longest2
+		}
+
+		if longest3 > longest {
+			longest = longest3
+		}
+
+		return longest
+	}
+
+	return pre[0 : search(t, pre, 0, 0)+1]
 }
