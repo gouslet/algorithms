@@ -4,7 +4,7 @@
  * Created At: Tuesday, 2022/02/15 , 16:44:46                                  *
  * Author: elchn                                                               *
  * -----                                                                       *
- * Last Modified: Monday, 2022/03/7 , 00:05:57                                 *
+ * Last Modified: Monday, 2022/03/7 , 21:59:13                                 *
  * Modified By: elchn                                                          *
  * -----                                                                       *
  * HISTORY:                                                                    *
@@ -13,6 +13,8 @@
  */
 
 package tries
+
+import "algorithms/strings"
 
 // tries_map map based tries
 type tries_map struct {
@@ -194,4 +196,39 @@ func (t *tries_map) LongestPrefixOf(pre string) string {
 		return search(x.children[rune(s[d])], s, d+1, length)
 	}
 	return pre[0:search(t, pre, 0, 0)]
+}
+
+// Delete removes key and its value from the tries
+func (t *tries_map) Delete(key string) any {
+	var val any
+	var delete func(x *tries_map, s string, d int) *tries_map
+
+	delete = func(x *tries_map, s string, d int) *tries_map {
+		if x == nil {
+			return nil
+		}
+
+		if d == len(key) {
+			val = x.val
+			x.val = nil
+		} else {
+			c := rune(s[d])
+			x.children[c] = delete(x.children[c], s, d+1)
+		}
+
+		if x.val != nil {
+			return x
+		}
+
+		for i := 0; i < strings.R; i++ {
+			if x.children[rune(i)] != nil {
+				return x
+			}
+		}
+
+		return nil
+	}
+
+	delete(t, key, 0)
+	return val
 }

@@ -4,7 +4,7 @@
  * Created At: Sunday, 2022/02/13 , 18:29:23                                   *
  * Author: elchn                                                               *
  * -----                                                                       *
- * Last Modified: Sunday, 2022/03/6 , 23:48:33                                 *
+ * Last Modified: Monday, 2022/03/7 , 21:55:22                                 *
  * Modified By: elchn                                                          *
  * -----                                                                       *
  * HISTORY:                                                                    *
@@ -68,8 +68,38 @@ func (t tries_arr) Size() int {
 }
 
 // Delete removes key and its value from the tries
-func (t *tries_arr) Delete(key string) {
+func (t *tries_arr) Delete(key string) any {
+	var val any
+	var delete func(x *tries_arr, s string, d int) *tries_arr
 
+	delete = func(x *tries_arr, s string, d int) *tries_arr {
+		if x == nil {
+			return nil
+		}
+
+		if d == len(key) {
+			val = x.val
+			x.val = nil
+		} else {
+			c := s[d]
+			x.children[c] = delete(x.children[c], s, d+1)
+		}
+
+		if x.val != nil {
+			return x
+		}
+
+		for i := 0; i < strings.R; i++ {
+			if x.children[i] != nil {
+				return x
+			}
+		}
+
+		return nil
+	}
+
+	delete(t, key, 0)
+	return val
 }
 
 // Contains returns if their is a value paired with key in the tries

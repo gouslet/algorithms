@@ -4,7 +4,7 @@
  * Created At: Wednesday, 2022/02/16 , 00:48:34                                *
  * Author: elchn                                                               *
  * -----                                                                       *
- * Last Modified: Monday, 2022/03/7 , 00:58:57                                 *
+ * Last Modified: Monday, 2022/03/7 , 21:59:41                                 *
  * Modified By: elchn                                                          *
  * -----                                                                       *
  * HISTORY:                                                                    *
@@ -129,6 +129,12 @@ func TestTriesMap(t *testing.T) {
 		for pre, fix := range test.longestPrefixOf {
 			if lpf := tries_map.LongestPrefixOf(pre); lpf != fix {
 				t.Errorf("LongestPrefixOf(%q) = %v,want %v", pre, lpf, fix)
+			}
+		}
+
+		for k, v := range test.pairs {
+			if del := tries_map.Delete(k); del != v {
+				t.Errorf("Delete(%q) = %v,want %v", k, del, v)
 			}
 		}
 	}

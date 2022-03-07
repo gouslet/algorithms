@@ -4,7 +4,7 @@
  * Created At: Wednesday, 2022/02/16 , 01:29:08                                *
  * Author: elchn                                                               *
  * -----                                                                       *
- * Last Modified: Monday, 2022/03/7 , 00:14:49                                 *
+ * Last Modified: Monday, 2022/03/7 , 22:00:52                                 *
  * Modified By: elchn                                                          *
  * -----                                                                       *
  * HISTORY:                                                                    *
@@ -13,6 +13,8 @@
  */
 
 package tries
+
+import "algorithms/strings"
 
 // find returns a sub-tries whose root matches ch
 func (t *tries_slice) find(ch rune) *tries_slice {
@@ -87,8 +89,38 @@ func (t tries_slice) Size() int {
 }
 
 // Delete removes key and its value from the tries
-func (t *tries_slice) Delete(key string) {
+func (t *tries_slice) Delete(key string) any {
+	var val any
+	var delete func(x *tries_slice, s string, d int) *tries_slice
 
+	delete = func(x *tries_slice, s string, d int) *tries_slice {
+		if x == nil {
+			return nil
+		}
+
+		if d == len(key) {
+			val = x.val
+			x.val = nil
+		} else {
+			c := rune(s[d])
+			x.children[c] = delete(x.children[c], s, d+1)
+		}
+
+		if x.val != nil {
+			return x
+		}
+
+		for i := 0; i < strings.R; i++ {
+			if x.children[rune(i)] != nil {
+				return x
+			}
+		}
+
+		return nil
+	}
+
+	delete(t, key, 0)
+	return val
 }
 
 // Contains returns if their is a value paired with key in the tries

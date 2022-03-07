@@ -4,7 +4,7 @@
  * Created At: Tuesday, 2022/02/15 , 16:07:07                                  *
  * Author: elchn                                                               *
  * -----                                                                       *
- * Last Modified: Monday, 2022/03/7 , 00:58:44                                 *
+ * Last Modified: Monday, 2022/03/7 , 21:57:20                                 *
  * Modified By: elchn                                                          *
  * -----                                                                       *
  * HISTORY:                                                                    *
@@ -123,6 +123,12 @@ func TestTriesArr(t *testing.T) {
 		for pre, fix := range test.longestPrefixOf {
 			if lpf := tries_arr.LongestPrefixOf(pre); lpf != fix {
 				t.Errorf("LongestPrefixOf(%q) = %v,want %v", pre, lpf, fix)
+			}
+		}
+
+		for k, v := range test.pairs {
+			if del := tries_arr.Delete(k); del != v {
+				t.Errorf("Delete(%q) = %v,want %v", k, del, v)
 			}
 		}
 	}
