@@ -4,7 +4,7 @@
  * Created At: Wednesday, 2022/02/16 , 22:25:07                                *
  * Author: elchn                                                               *
  * -----                                                                       *
- * Last Modified: Monday, 2022/03/7 , 00:58:30                                 *
+ * Last Modified: Tuesday, 2022/03/8 , 00:34:15                                *
  * Modified By: elchn                                                          *
  * -----                                                                       *
  * HISTORY:                                                                    *
@@ -191,6 +191,32 @@ func TestTernarySearchTries(t *testing.T) {
 				}
 			}
 		})
+
+		for k, v := range test.pairs {
+			if del := tst.Delete(k); del != v {
+				t.Errorf("Delete(%q) = %v,want %v", k, del, v)
+			}
+			for i, key := range keys {
+				if key == k {
+					if i == 0 {
+						keys = keys[i+1:]
+					} else if i == len(keys)-1 {
+						keys = keys[:i-1]
+					} else {
+						keys = append(keys[:i-1], keys[i+1:]...)
+					}
+					break
+				}
+			}
+			sort.Strings(keys)
+			b := tst.Keys()
+			sort.Strings(b)
+			if !reflect.DeepEqual(b, keys) {
+																																																																																																																																																																																																																																																																																																																														t.Errorf("Keys() = %v,want %v", b, keys)
+			}
+
+		}
+
 	}
 }
 

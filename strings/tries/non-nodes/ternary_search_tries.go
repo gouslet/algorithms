@@ -4,7 +4,7 @@
  * Created At: Wednesday, 2022/02/16 , 21:26:29                                *
  * Author: elchn                                                               *
  * -----                                                                       *
- * Last Modified: Monday, 2022/03/7 , 01:00:11                                 *
+ * Last Modified: Friday, 2022/03/11 , 17:47:03                                *
  * Modified By: elchn                                                          *
  * -----                                                                       *
  * HISTORY:                                                                    *
@@ -94,8 +94,48 @@ func (t tst) Size() int {
 }
 
 // Delete removes key and its value from the tries
-func (t *tst) Delete(key string) {
+func (t *tst) Delete(key string) any {
+	var val any
+	if key == "" {
+		val = t.val
+		t.val = nil
+		return val
+	}
 
+	var delete func(x *tst, s string, d int) *tst
+
+	length := len(key) - 1
+	delete = func(x *tst, s string, d int) *tst {
+		if x == nil {
+			return nil
+		}
+
+		if ch := rune(s[d]); x.char < ch {
+			x.right = delete(x.right, s, d)
+		} else if x.char > ch {
+			x.left = delete(x.left, s, d)
+		} else {
+			if x.left == nil {
+				if x.right == nil {
+					if x.mid == nil {
+						if x.val != nil {
+							if d == length {
+								return nil
+							}
+							return x
+						} else {
+							return nil
+						}
+					}
+				}
+			}
+
+			x.mid = delete(x.mid, s, d+1)
+		}
+		return x
+	}
+	delete(t.right, key, 0)
+	return val
 }
 
 // Contains returns if their is a value paired with key in the tries
